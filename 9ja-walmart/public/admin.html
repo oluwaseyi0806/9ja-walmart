@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>9JA WALMART · Admin Center</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ===== 1. BASE & COLOURS (change the brand colour in --g) ===== */
+:root{--g:#0B7A53;--gd:#075E40;--ink:#0B1220;--mute:#5B6575;--line:#e5e7eb;--bg:#EEF1F5;--red:#b91c1c;--amber:#b45309;--font:'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif}
+*{box-sizing:border-box;margin:0}
+body{font-family:var(--font);background:var(--bg);color:var(--ink);display:flex;min-height:100vh;-webkit-font-smoothing:antialiased}
+button,input,select{font-family:var(--font);font-size:.9rem}
+/* ===== 2. SIDEBAR MENU ===== */
+aside{width:236px;background:#0B1220;color:#fff;padding:20px 12px;position:sticky;top:0;height:100vh;flex-shrink:0;display:flex;flex-direction:column}
+.brand{font-weight:800;font-size:1.2rem;padding:0 10px 4px}.brand span{color:#F5A524}.brand small{display:block;font-weight:500;font-size:.72rem;color:#9AA7BA;margin-top:2px}
+nav{margin-top:20px;display:flex;flex-direction:column;gap:4px;flex:1}
+nav button{background:none;border:0;color:#CBD5E1;text-align:left;padding:11px 12px;border-radius:10px;cursor:pointer;font-weight:600;display:flex;justify-content:space-between;align-items:center}
+nav button:hover{background:#ffffff14}nav button.on{background:var(--g);color:#fff}
+.cnt{background:#F5A524;color:#1A1203;border-radius:99px;font-size:.7rem;padding:1px 8px;display:none}
+.side-foot{display:flex;flex-direction:column;gap:6px;font-size:.82rem}.side-foot a,.side-foot button{color:#9AA7BA;background:none;border:0;text-align:left;cursor:pointer;padding:6px 12px;text-decoration:none}
+/* ===== 3. TOP BAR (title + key box) ===== */
+main{flex:1;min-width:0;padding:20px 26px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.top h1{font-size:1.45rem;letter-spacing:-.02em}
+.keybox{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.keybox input{padding:10px 12px;border:1px solid var(--line);border-radius:10px;width:290px;background:#fff}
+.keybox input:focus{outline:2px solid #bbf7d0;border-color:var(--g)}
+.stateTxt{font-size:.82rem;font-weight:600}
+/* ===== 4. BUTTONS (green = good, red = reject, amber = pause) ===== */
+.b{border:0;border-radius:9px;padding:8px 13px;font-weight:700;cursor:pointer;background:#e5e7eb;color:var(--ink)}
+.b.main{background:var(--g);color:#fff}.b.main:hover{background:var(--gd)}
+.b.ok{background:#dcfce7;color:#166534}.b.ok:hover{background:#bbf7d0}
+.b.no{background:#fee2e2;color:var(--red)}.b.no:hover{background:#fecaca}
+.b.warn{background:#fef3c7;color:var(--amber)}.b.warn:hover{background:#fde68a}
+/* ===== 5. CARDS, TIPS, TABLES ===== */
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px}
+.tip{background:#ecfdf5;border:1px solid #a7f3d0;color:#065f46;border-radius:12px;padding:12px 14px;margin-bottom:14px;font-size:.88rem;line-height:1.5}
+.tip b{display:block;margin-bottom:2px}
+.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
+.stat{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;cursor:pointer;text-align:left;transition:.15s}
+.stat:hover{border-color:var(--g);box-shadow:0 6px 18px #0001;transform:translateY(-2px)}
+.stat .n{font-size:1.7rem;font-weight:800;letter-spacing:-.02em}.stat .l{color:var(--mute);font-size:.82rem;font-weight:600;margin-top:2px}.stat .go{font-size:.74rem;color:var(--g);font-weight:700;margin-top:8px}
+.stat.alert{border-color:#f5b86b;background:#fffaf0}
+.tbl{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:auto}
+table{width:100%;border-collapse:collapse;min-width:720px}
+th{background:#F5F7FA;text-align:left;font-size:.74rem;text-transform:uppercase;letter-spacing:.04em;color:var(--mute);padding:11px 14px;white-space:nowrap}
+td{padding:12px 14px;border-top:1px solid var(--line);font-size:.86rem;vertical-align:top}
+td small{color:var(--mute)}.thumb{width:48px;height:48px;object-fit:cover;border-radius:8px;border:1px solid var(--line)}
+.pill{display:inline-block;font-size:.7rem;font-weight:700;padding:3px 9px;border-radius:99px;white-space:nowrap}
+.pill.green{background:#dcfce7;color:#166534}.pill.amber{background:#fef3c7;color:#92400e}.pill.red{background:#fee2e2;color:#991b1b}.pill.grey{background:#e5e7eb;color:#374151}
+.row{display:flex;gap:6px;flex-wrap:wrap}.empty{padding:26px;text-align:center;color:var(--mute)}
+.toolbar{display:flex;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap}.toolbar select{padding:9px;border:1px solid var(--line);border-radius:10px;background:#fff}
+/* ===== 5b. SEARCH BOX, SORTABLE HEADERS, PHONE POPUP ===== */
+.sr{padding:9px 12px;border:1px solid var(--line);border-radius:10px;min-width:250px;background:#fff}.sr:focus{outline:2px solid #bbf7d0;border-color:var(--g)}
+th{cursor:pointer;user-select:none}th:hover{color:var(--g)}
+.modal{position:fixed;inset:0;background:#0007;z-index:40;display:grid;place-items:center;padding:14px;overflow:auto}.modal[hidden]{display:none}
+.mbox{background:#fff;border-radius:18px;padding:20px;width:min(600px,100%);max-height:92vh;overflow:auto}
+.mh{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:6px}
+.pics{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}.pics img{width:96px;height:96px;object-fit:cover;border-radius:10px;border:1px solid var(--line)}
+.imeiimg{width:200px;border-radius:10px;border:1px solid var(--line);margin-top:6px}
+.spec td{padding:5px 4px;border-top:1px solid var(--line)}.spec td:first-child{color:var(--mute);width:38%;text-transform:capitalize}.spec{min-width:0}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}.grid2 label{font-size:.8rem;font-weight:700;display:block}.grid2 input{width:100%;margin-top:4px;padding:9px;border:1px solid var(--line);border-radius:10px}
+/* ===== 6. LOCK SCREEN ===== */
+.lock{max-width:640px;margin:30px auto}.lock h2{margin-bottom:8px}.lock ol{margin:12px 0 0 20px;line-height:1.9}.lock code{background:#EEF1F5;padding:2px 7px;border-radius:6px}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#0B1220;color:#fff;padding:11px 20px;border-radius:99px;z-index:50;font-weight:600}
+@media(max-width:820px){body{flex-direction:column}aside{width:100%;height:auto;position:static;padding:12px}nav{flex-direction:row;overflow-x:auto;margin-top:10px}nav button{white-space:nowrap}.side-foot{display:none}main{padding:14px}.keybox input{width:100%}}
+</style>
+</head>
+<body>
+<!-- ===== SIDEBAR MENU: click a section ===== -->
+<aside>
+  <div class="brand">9JA <span>WALMART</span><small>Admin Center</small></div>
+  <nav id="nav">
+    <button data-tab="overview">📊 Overview</button>
+    <button data-tab="sellers">🏪 Sellers <b class="cnt" id="c-sellers"></b></button>
+    <button data-tab="listings">📱 Phone listings</button>
+    <button data-tab="orders">📦 Orders <b class="cnt" id="c-orders"></b></button>
+    <button data-tab="disputes">⚠️ Disputes <b class="cnt" id="c-disputes"></b></button>
+    <button data-tab="payouts">💰 Payouts &amp; money</button>
+  </nav>
+  <div class="side-foot"><a href="/" target="_blank">↗ Open the shop</a><button id="lock">🔒 Lock admin</button></div>
+</aside>
+
+<main>
+  <!-- ===== TOP BAR: page title + admin key box ===== -->
+  <div class="top">
+    <h1 id="title">Admin Center</h1>
+    <div class="keybox">
+      <input id="key" type="password" placeholder="Paste your admin key here, then press Enter" autocomplete="off">
+      <button class="b main" id="unlock">Unlock</button>
+      <span class="stateTxt" id="state"></span>
+    </div>
+  </div>
+
+  <!-- ===== LOCK SCREEN (shown until the key is accepted) ===== -->
+  <section id="locked" class="card lock">
+    <h2>🔒 Welcome back, boss</h2>
+    <p>This page is protected. Unlock it with your admin key:</p>
+    <ol>
+      <li>Open the file <code>.env</code> in VS Code (project folder).</li>
+      <li>Copy the text after <code>ADMIN_KEY=</code> (no spaces).</li>
+      <li>Paste it in the box at the top right, then press <b>Enter</b> or click <b>Unlock</b>.</li>
+    </ol>
+  </section>
+
+  <div id="app" hidden>
+    <!-- ===== OVERVIEW ===== -->
+    <section data-panel="overview">
+      <div class="tip"><b>Your daily routine (5 minutes)</b>1) Approve or reject new sellers. 2) Check new phone listings and their IMEI photos. 3) Watch "paid orders waiting to ship". 4) Pay sellers whose money is ready. Click any card below to jump there.</div>
+      <div class="toolbar"><button class="b main" data-export="all">⬇ Download EVERYTHING to Excel (4 sheets: sellers, phones, orders, payouts)</button></div>
+      <div class="stats" id="stats"></div>
+    </section>
+
+    <!-- ===== SELLERS ===== -->
+    <section data-panel="sellers" hidden>
+      <div class="tip"><b>What to do here</b>New stores wait here as <i>Pending</i>. Check their name, address, phone and bank details (call them!). Click <b>Approve</b> to let them sell, <b>Reject</b> if details look fake, <b>Suspend</b> to stop a bad seller (their phones disappear from the shop).</div>
+      <div class="toolbar"><input class="sr" data-search="t-sellers" placeholder="🔎 Search sellers…"><button class="b main" data-export="sellers">⬇ Download Excel</button><small style="color:var(--mute)">Tip: click a column title to sort it.</small></div>
+      <div class="tbl"><table><thead><tr><th>Store</th><th>Owner &amp; contact</th><th>Business ID</th><th>Bank (for payouts)</th><th>Status</th><th>Action</th></tr></thead><tbody id="t-sellers"></tbody></table></div>
+    </section>
+
+    <!-- ===== LISTINGS ===== -->
+    <section data-panel="listings" hidden>
+      <div class="tip"><b>What to do here</b>Click <b>View IMEI photo</b> on every new listing. If the photo is blurry, missing or does not look like the phone, click <b>Hide</b>. Hidden listings disappear from the shop immediately. Click <b>Show</b> to bring one back.</div>
+      <div class="toolbar"><input class="sr" data-search="t-listings" placeholder="🔎 Search phones, stores, towns…"><button class="b main" data-export="listings">⬇ Download Excel</button><small style="color:var(--mute)">Tip: click a column title to sort it.</small></div>
+      <div class="tbl"><table><thead><tr><th>Phone</th><th>Store &amp; location</th><th>Price</th><th>Stock</th><th>Proof</th><th>Status</th><th>Action</th></tr></thead><tbody id="t-listings"></tbody></table></div>
+    </section>
+
+    <!-- ===== ORDERS ===== -->
+    <section data-panel="orders" hidden>
+      <div class="tip"><b>What to do here</b>Normal path: <i>Awaiting payment</i> → customer pays (turns <i>Paid</i> by itself) → seller ships → customer confirms (<i>Delivered</i>). Use <b>Mark paid</b> ONLY when you can see the money in your bank account. Setting <b>Delivered</b> releases the seller's money; setting <b>Cancelled</b> on a paid order means you must refund the buyer.</div>
+      <div class="toolbar"><label for="f-orders"><b>Show:</b></label>
+        <select id="f-orders"><option value="">All orders</option><option value="await">Awaiting payment</option><option value="ship">Paid - waiting for seller to ship</option><option value="way">Shipped / on the way</option><option value="done">Delivered</option><option value="refund">Refund due</option><option value="cancel">Cancelled</option></select>
+        <input class="sr" data-search="t-orders" placeholder="🔎 Search orders, customers, phones…"><button class="b main" data-export="orders">⬇ Download Excel</button><small style="color:var(--mute)">Tip: click a column title to sort it.</small></div>
+      <div class="tbl"><table><thead><tr><th>Order</th><th>Customer</th><th>Phones ordered</th><th>Total</th><th>Payment</th><th>Order status</th></tr></thead><tbody id="t-orders"></tbody></table></div>
+    </section>
+
+    <!-- ===== DISPUTES ===== -->
+    <section data-panel="disputes" hidden>
+      <div class="tip"><b>What to do here</b>A buyer reported a problem, so the money is <b>frozen</b> until you decide. Phone the buyer and the store first. Choose <b>Refund the buyer</b> (the order is cancelled, then you refund the buyer from your Paystack dashboard) or <b>Pay the seller</b> (the problem was not real). Open items are at the top.</div>
+      <div class="tbl"><table><thead><tr><th>Order</th><th>Buyer</th><th>Store &amp; phone</th><th>Problem</th><th>Status</th><th>Action</th></tr></thead><tbody id="t-disputes"></tbody></table></div>
+    </section>
+
+    <!-- ===== PAYOUTS ===== -->
+    <section data-panel="payouts" hidden>
+      <div class="tip"><b>What to do here</b>"Ready to pay" is money the seller has earned (buyer confirmed delivery). Send it to the seller's bank account yourself, THEN click <b>I have paid this seller</b>. Never click it before sending the money. Your own commission is already separated.</div>
+      <div class="stats" id="plat" style="margin-bottom:14px"></div>
+      <div class="toolbar"><input class="sr" data-search="t-payouts" placeholder="🔎 Search sellers…"><button class="b main" data-export="payouts">⬇ Download Excel</button><small style="color:var(--mute)">Tip: click a column title to sort it.</small></div>
+      <div class="tbl"><table><thead><tr><th>Seller</th><th>Bank details</th><th>On hold (not delivered yet)</th><th>Ready to pay</th><th>Action</th></tr></thead><tbody id="t-payouts"></tbody></table></div>
+    </section>
+  </div>
+</main>
+<div class="modal" id="modal" hidden><div class="mbox" id="box"></div></div>
+<div class="toast" id="toast" hidden></div>
+
+<script src="/admin-excel.js"></script>
+<script>
+/* ===== A. HELPERS ===== */
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const N = k => '₦' + (k / 100).toLocaleString('en-NG');
+const pill = (t, c) => `<span class="pill ${c}">${esc(t)}</span>`;
+let KEY = sessionStorage.getItem('akey') || '', TAB = 'overview', ORDERS = [], STATUSES = [];
+const RAW = { sellers: [], listings: [], payouts: [] };  // latest data, used for Excel files and the phone popup
+function toast(m) { const t = $('#toast'); t.textContent = m; t.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(() => t.hidden = true, 2600); }
+async function api(path, opt = {}) {
+  const r = await fetch('/api/admin' + path, { ...opt, headers: { 'x-admin-key': KEY, 'Content-Type': 'application/json' } });
+  const d = await r.json().catch(() => ({}));
+  if (r.status === 401) { lockIt('❌ Wrong admin key. Copy it again from the .env file.'); throw new Error('locked'); }
+  if (!r.ok) throw new Error(d.error || 'Something went wrong');
+  return d;
+}
+
+/* ===== B. UNLOCK / LOCK (Enter key works) ===== */
+function lockIt(msg) { KEY = ''; sessionStorage.removeItem('akey'); $('#app').hidden = true; $('#locked').hidden = false; $('#state').style.color = '#b91c1c'; $('#state').textContent = msg || ''; $('#title').textContent = 'Admin Center'; }
+async function unlock() {
+  KEY = $('#key').value.trim() || KEY; if (!KEY) return lockIt('Paste your admin key first.');
+  try {
+    await api('/stats'); sessionStorage.setItem('akey', KEY); $('#key').value = '';
+    $('#locked').hidden = true; $('#app').hidden = false; $('#state').style.color = '#166534'; $('#state').textContent = '✅ Unlocked';
+    showTab(TAB); refreshCounts();
+  } catch (e) { if (e.message !== 'locked') lockIt('❌ Cannot reach the server. Is npm start still running?'); }
+}
+$('#key').addEventListener('keydown', e => { if (e.key === 'Enter') unlock(); });
+$('#unlock').onclick = unlock; $('#lock').onclick = () => lockIt('Locked 🔒');
+
+/* ===== C. MENU / TABS ===== */
+const TITLES = { overview: '📊 Overview', sellers: '🏪 Sellers', listings: '📱 Phone listings', orders: '📦 Orders', disputes: '⚠️ Disputes', payouts: '💰 Payouts & money' };
+function showTab(t) {
+  TAB = t; $('#title').textContent = TITLES[t];
+  $$('[data-panel]').forEach(p => p.hidden = p.dataset.panel !== t); $$('#nav button').forEach(b => b.classList.toggle('on', b.dataset.tab === t));
+  ({ overview: loadOverview, sellers: loadSellers, listings: loadListings, orders: loadOrders, disputes: loadDisputes, payouts: loadPayouts })[t]().catch(() => {});
+}
+$$('#nav button').forEach(b => b.onclick = () => showTab(b.dataset.tab));
+async function refreshCounts() {
+  const s = await api('/stats'); const c = (id, n) => { $(id).textContent = n; $(id).style.display = n ? 'inline-block' : 'none'; };
+  c('#c-sellers', s.pendingSellers); c('#c-orders', s.toShip + s.refundDue); c('#c-disputes', s.openDisputes || 0); return s;
+}
+
+/* ===== D. OVERVIEW ===== */
+async function loadOverview() {
+  const s = await refreshCounts();
+  const card = (n, l, go, tab, alert) => `<button class="stat ${alert ? 'alert' : ''}" data-go="${tab}"><div class="n">${n}</div><div class="l">${l}</div><div class="go">${go} →</div></button>`;
+  $('#stats').innerHTML = card(s.pendingSellers, 'Sellers waiting for approval', 'Review them', 'sellers', s.pendingSellers) + card(s.toShip, 'Paid orders waiting to ship', 'See orders', 'orders', s.toShip) +
+    card(s.refundDue, 'Refunds due to buyers', 'See orders', 'orders', s.refundDue) + card(s.awaitingPayment, 'Orders awaiting payment', 'See orders', 'orders') +
+    card(N(s.commissionEarned), 'Your commission earned', 'Open money page', 'payouts') + card(N(s.commissionPending), 'Commission pending delivery', 'Open money page', 'payouts') +
+    card(s.approvedSellers, 'Approved sellers', 'See sellers', 'sellers') + card(s.liveListings, 'Phones live in the shop', 'Check listings', 'listings') +
+    card(s.appReviews ? '⭐ ' + s.appRating : '-', 'App rating (' + s.appReviews + ' reviews)', '', 'overview');
+}
+
+/* ===== E. SELLERS ===== */
+async function loadSellers() {
+  const d = await api('/sellers'), col = { pending: 'amber', approved: 'green', rejected: 'red', suspended: 'red' };
+  RAW.sellers = d;
+  $('#t-sellers').innerHTML = d.length ? d.map(x => `<tr><td><b>${esc(x.store_name)}</b><br><small>${esc(x.address)}<br>${esc(x.city || '')}, ${esc(x.state || '')}</small></td>
+    <td>${esc(x.email)}<br><small>${esc(x.phone)}</small></td><td>${esc(x.business_id || '-')}</td><td>${esc(x.bank_name)}<br>${esc(x.account_no)}<br><small>${esc(x.account_name)}</small></td>
+    <td>${pill(x.status, col[x.status] || 'grey')}${x.note ? '<br><small>' + esc(x.note) + '</small>' : ''}</td>
+    <td><div class="row">${x.status !== 'approved' ? `<button class="b ok" data-act="seller" data-id="${x.user_id}" data-s="approved">Approve</button>` : ''}
+    ${x.status === 'pending' ? `<button class="b no" data-act="seller" data-id="${x.user_id}" data-s="rejected">Reject</button>` : ''}
+    ${x.status === 'approved' ? `<button class="b warn" data-act="seller" data-id="${x.user_id}" data-s="suspended">Suspend</button>` : ''}</div></td></tr>`).join('') : '<tr><td colspan="6" class="empty">No seller applications yet.</td></tr>';
+}
+
+/* ===== F. LISTINGS ===== */
+async function loadListings() {
+  const d = await api('/listings'); RAW.listings = d;
+  $('#t-listings').innerHTML = d.length ? d.map(p => `<tr><td><div class="row" style="flex-wrap:nowrap">${p.image ? `<img class="thumb" src="${esc(p.image)}" alt="">` : ''}<b>${esc(p.name)}</b></div></td>
+    <td>${esc(p.seller)}<br><small>${esc(p.city || '')}, ${esc(p.state || '')}</small></td><td>${N(p.price)}</td><td>${p.stock}</td>
+    <td>${p.imei_photo ? `<a href="${esc(p.imei_photo)}" target="_blank" rel="noopener"><b>View IMEI photo</b></a>` : pill('No IMEI', 'red')}</td>
+    <td>${p.verified ? pill('Live', 'green') : pill('Hidden', 'grey')}</td>
+    <td><div class="row"><button class="b" data-act="open" data-id="${p.id}">Open / Edit</button>${p.verified ? `<button class="b warn" data-act="listing" data-id="${p.id}" data-show="0">Hide</button>` : `<button class="b ok" data-act="listing" data-id="${p.id}" data-show="1">Show</button>`}</div></td></tr>`).join('') : '<tr><td colspan="7" class="empty">No phone listings yet.</td></tr>';
+}
+
+/* ===== G. ORDERS ===== */
+const group = o => o.payment_status === 'refund_due' ? 'refund' : o.status === 'Cancelled' ? 'cancel' : o.status === 'Awaiting payment' ? 'await' : o.status === 'Paid' ? 'ship' : ['Shipped', 'Out for delivery', 'Packed'].includes(o.status) ? 'way' : o.status === 'Delivered' ? 'done' : '';
+async function loadOrders() {
+  const d = await api('/orders'); ORDERS = d.orders; STATUSES = d.statuses; drawOrders();
+}
+function drawOrders() {
+  const f = $('#f-orders').value, list = ORDERS.filter(o => !f || group(o) === f);
+  $('#t-orders').innerHTML = list.length ? list.map(o => {
+    const opts = (STATUSES.includes(o.status) ? STATUSES : [o.status, ...STATUSES]).map(s => `<option ${s === o.status ? 'selected' : ''}>${esc(s)}</option>`).join('');
+    const pay = o.payment_status === 'paid' ? pill('Paid', 'green') : o.payment_status === 'refund_due' ? pill('Refund due', 'red') : `${pill('Not paid', 'amber')}${o.status === 'Awaiting payment' ? ` <button class="b ok" data-act="markpaid" data-code="${esc(o.code)}">Mark paid</button>` : ''}`;
+    return `<tr><td><b>${esc(o.code)}</b><br><small>${esc(o.created)} UTC</small></td><td>${esc(o.name)}<br><small>${esc(o.phone)} · ${esc(o.state)}</small></td><td><small>${esc(o.items || '')}</small></td><td>${N(o.total)}</td><td>${pay}</td>
+      <td><select data-code="${esc(o.code)}" data-was="${esc(o.status)}">${opts}</select></td></tr>`;
+  }).join('') : '<tr><td colspan="6" class="empty">No orders in this view.</td></tr>';
+}
+$('#f-orders').onchange = drawOrders;
+document.addEventListener('change', async e => {
+  const el = e.target.closest('select[data-code]'); if (!el) return;
+  const s = el.value, paid = (ORDERS.find(o => o.code === el.dataset.code) || {}).payment_status === 'paid';
+  const warn = s === 'Delivered' && paid ? 'Set DELIVERED? This releases the money to the seller.' : s === 'Cancelled' && paid ? 'Cancel a PAID order? You must refund the buyer from Paystack.' : '';
+  if (warn && !confirm(warn)) { el.value = el.dataset.was; return; }
+  try { await api('/orders/' + el.dataset.code, { method: 'PATCH', body: JSON.stringify({ status: s }) }); toast('Order updated ✓'); loadOrders(); refreshCounts(); } catch (er) { toast(er.message); el.value = el.dataset.was; }
+});
+
+/* ===== G2. DISPUTES (buyer reported a problem; money is frozen until you decide) ===== */
+async function loadDisputes() {
+  const d = await api('/disputes');
+  $('#t-disputes').innerHTML = d.length ? d.map(x => `<tr><td><b>${esc(x.order_code)}</b><br><small>${N(x.total)}</small><br><small>${esc(x.items || '')}</small></td>
+    <td>${esc(x.name)}<br><small>${esc(x.phone)}</small></td><td>${esc(x.stores || '')}</td>
+    <td><b>${esc(x.reason)}</b><br><small>${esc(x.detail || '')}</small>${x.note ? `<br><small>Your note: ${esc(x.note)}</small>` : ''}<br><small>${esc(x.created)} UTC</small></td>
+    <td>${x.status === 'open' ? pill('Open', 'red') : x.status === 'refunded' ? pill('Buyer refunded', 'amber') : pill('Seller paid', 'green')}</td>
+    <td>${x.status === 'open' ? `<button class="b ok" data-act="dispute" data-d="release" data-id="${x.id}">Pay the seller</button> <button class="b" data-act="dispute" data-d="refund" data-id="${x.id}">Refund the buyer</button>` : ''}</td></tr>`).join('')
+    : '<tr><td colspan="6" class="empty">No problems reported. 🎉</td></tr>';
+}
+
+/* ===== H. PAYOUTS ===== */
+async function loadPayouts() {
+  const d = await api('/payouts'), m = Object.fromEntries(d.platform.map(x => [x.state, x.total]));
+  RAW.payouts = d.sellers;
+  $('#plat').innerHTML = `<div class="stat" style="cursor:default"><div class="n">${N(m.available || 0)}</div><div class="l">Your commission earned (delivered orders)</div></div><div class="stat" style="cursor:default"><div class="n">${N(m.held || 0)}</div><div class="l">Your commission pending delivery</div></div>`;
+  $('#t-payouts').innerHTML = d.sellers.length ? d.sellers.map(x => `<tr><td><b>${esc(x.store_name)}</b></td><td>${esc(x.bank_name)}<br>${esc(x.account_no)}<br><small>${esc(x.account_name)}</small></td><td>${N(x.held)}</td><td><b>${N(x.available)}</b></td>
+    <td>${x.available ? `<button class="b main" data-act="payout" data-id="${x.user_id}">I have paid this seller</button>` : '<small>Nothing to pay</small>'}</td></tr>`).join('') : '<tr><td colspan="5" class="empty">No sellers yet.</td></tr>';
+}
+
+/* ===== I. BUTTON CLICKS ===== */
+document.addEventListener('click', async e => {
+  const go = e.target.closest('[data-go]'); if (go) return showTab(go.dataset.go);
+  const t = e.target.closest('[data-act]'); if (!t) return;
+  try {
+    if (t.dataset.act === 'open') return openListing(+t.dataset.id);
+    if (t.dataset.act === 'seller') {
+      const s = t.dataset.s, note = s === 'approved' ? '' : (prompt(s === 'rejected' ? 'Why are you rejecting this store? (the seller will see this)' : 'Why are you suspending this store? (the seller will see this)') || '');
+      if (s !== 'approved' && !note) return; await api('/sellers/' + t.dataset.id, { method: 'PATCH', body: JSON.stringify({ status: s, note }) }); toast('Seller ' + s + ' ✓'); loadSellers(); refreshCounts();
+    } else if (t.dataset.act === 'listing') {
+      await api('/listings/' + t.dataset.id, { method: 'PATCH', body: JSON.stringify({ show: t.dataset.show === '1' }) }); toast('Listing updated ✓'); loadListings();
+    } else if (t.dataset.act === 'markpaid') {
+      if (!confirm('Only mark as paid if you can SEE this money in your bank account. Continue?')) return;
+      await api('/orders/' + t.dataset.code + '/mark-paid', { method: 'POST' }); toast('Marked as paid ✓'); loadOrders(); refreshCounts();
+    } else if (t.dataset.act === 'dispute') {
+      const refund = t.dataset.d === 'refund';
+      if (!confirm(refund ? 'Refund the BUYER? The order is cancelled and the seller will NOT be paid. You must then refund the buyer from Paystack.' : 'Pay the SELLER? The buyer will not be refunded.')) return;
+      const note = prompt('Short note for your records (optional)') || '';
+      await api('/disputes/' + t.dataset.id + '/resolve', { method: 'POST', body: JSON.stringify({ action: t.dataset.d, note }) });
+      toast('Dispute resolved ✓'); loadDisputes(); refreshCounts();
+    } else if (t.dataset.act === 'payout') {
+      if (!confirm('Click OK only AFTER you have sent this money to the seller\'s bank account.')) return;
+      const r = await api('/payouts/' + t.dataset.id, { method: 'POST' }); toast('Recorded: ' + N(r.paid) + ' paid out ✓'); loadPayouts();
+    }
+  } catch (er) { if (er.message !== 'locked') toast(er.message); }
+});
+
+/* ===== K. SEARCH BOXES + CLICK-TO-SORT HEADERS ===== */
+function filterRows(id) {
+  const box = document.querySelector(`[data-search="${id}"]`), q = box ? box.value.trim().toLowerCase() : '';
+  $$('#' + id + ' tr').forEach(r => r.style.display = !q || r.innerText.toLowerCase().includes(q) ? '' : 'none');
+}
+$$('[data-search]').forEach(i => i.addEventListener('input', () => filterRows(i.dataset.search)));
+['t-sellers', 't-listings', 't-orders', 't-disputes', 't-payouts'].forEach(id => new MutationObserver(() => filterRows(id)).observe($('#' + id), { childList: true })); // keep the search active after refresh
+document.addEventListener('click', e => {
+  const th = e.target.closest('th'); if (!th) return;
+  const table = th.closest('table'), i = [...th.parentNode.children].indexOf(th), tb = table.tBodies[0], dir = th.dataset.dir === 'asc' ? 'desc' : 'asc';
+  table.querySelectorAll('th').forEach(x => { delete x.dataset.dir; x.textContent = x.textContent.replace(/ [▲▼]$/, ''); });
+  th.dataset.dir = dir; th.textContent += dir === 'asc' ? ' ▲' : ' ▼';
+  const num = v => parseFloat(String(v).replace(/[₦,\s]/g, '')), rows = [...tb.rows].filter(r => r.cells.length > 1);
+  rows.sort((a, b) => { const x = a.cells[i].innerText.trim(), y = b.cells[i].innerText.trim(), nx = num(x), ny = num(y);
+    const c = /^[₦\d]/.test(x) && /^[₦\d]/.test(y) && !isNaN(nx) && !isNaN(ny) ? nx - ny : x.localeCompare(y, undefined, { numeric: true }); return dir === 'asc' ? c : -c; });
+  rows.forEach(r => tb.appendChild(r));
+});
+
+/* ===== L. EXCEL FILES (real .xlsx, see admin-excel.js) ===== */
+const sp = v => { try { return JSON.parse(v || '{}'); } catch { return {}; } }, NG = k => k / 100;
+const SHEETS = {
+  sellers: () => ({ name: 'Sellers', headers: ['Store', 'State', 'Town', 'Address', 'Owner email', 'Phone', 'Business ID', 'Bank', 'Account number', 'Account name', 'Status', 'Applied on'],
+    rows: RAW.sellers.map(x => [x.store_name, x.state, x.city, x.address, x.email, x.phone, x.business_id, x.bank_name, x.account_no, x.account_name, x.status, x.created]) }),
+  listings: () => ({ name: 'Phone listings', headers: ['ID', 'Phone', 'Brand', 'Store', 'State', 'Town', 'Price (NGN)', 'Old price (NGN)', 'Stock', 'Colour', 'Storage', 'RAM', 'Condition', 'Warranty', 'Network', 'Status', 'IMEI photo link'],
+    rows: RAW.listings.map(p => { const s = sp(p.specs); return [p.id, p.name, p.brand, p.seller, p.state, p.city, NG(p.price), NG(p.old_price), p.stock, s.color, s.storage, s.ram, s.condition, s.warranty, s.network, p.verified ? 'Live' : 'Hidden', p.imei_photo ? location.origin + p.imei_photo : '']; }) }),
+  orders: all => { const f = $('#f-orders').value, list = ORDERS.filter(o => all || !f || group(o) === f);
+    return { name: 'Orders', headers: ['Order code', 'Date (UTC)', 'Customer', 'Phone', 'Email', 'State', 'Delivery address', 'Phones ordered', 'Total (NGN)', 'Payment', 'Order status', 'Payment reference'],
+      rows: list.map(o => [o.code, o.created, o.name, o.phone, o.email, o.state, o.address, o.items, NG(o.total), o.payment_status, o.status, o.reference]) }; },
+  payouts: () => ({ name: 'Payouts', headers: ['Store', 'Bank', 'Account number', 'Account name', 'On hold (NGN)', 'Ready to pay (NGN)'],
+    rows: RAW.payouts.map(x => [x.store_name, x.bank_name, x.account_no, x.account_name, NG(x.held), NG(x.available)]) }),
+};
+async function exportTab(kind) {
+  try {
+    const all = kind === 'all';
+    if (all) await Promise.all([loadSellers(), loadListings(), loadOrders(), loadPayouts()]);
+    const sheets = (all ? ['sellers', 'listings', 'orders', 'payouts'] : [kind]).map(k => SHEETS[k](all));
+    downloadBlob(makeXlsx(sheets), '9ja-walmart-' + (all ? 'everything' : kind) + '-' + new Date().toISOString().slice(0, 10) + '.xlsx');
+    toast('⬇ Excel file downloaded');
+  } catch (e) { if (e.message !== 'locked') toast('Could not create the file: ' + e.message); }
+}
+document.addEventListener('click', e => { const b = e.target.closest('[data-export]'); if (b) exportTab(b.dataset.export); });
+
+/* ===== M. OPEN A PHONE (photos, details, IMEI, edit price/stock, hide) ===== */
+function openListing(id) {
+  const p = RAW.listings.find(x => x.id === id); if (!p) return;
+  const s = sp(p.specs), imgs = (() => { try { return JSON.parse(p.images || '[]'); } catch { return []; } })();
+  $('#box').innerHTML = `<div class="mh"><h3>${esc(p.name)}</h3><button class="b" id="mx">✕ Close</button></div>
+    <p><small>${esc(p.seller)} · ${esc(p.city || '')}, ${esc(p.state || '')} · ${p.verified ? 'Live in shop' : 'Hidden'}</small></p>
+    <div class="pics">${imgs.map(u => `<a href="${esc(u)}" target="_blank" rel="noopener"><img src="${esc(u)}" alt=""></a>`).join('') || '<small>No photos</small>'}</div>
+    <table class="spec">${Object.entries(s).filter(([, v]) => v).map(([k, v]) => `<tr><td>${esc(k)}</td><td>${esc(v)}</td></tr>`).join('')}</table>
+    <p style="margin-top:10px"><b>IMEI proof photo</b><br>${p.imei_photo ? `<a href="${esc(p.imei_photo)}" target="_blank" rel="noopener"><img class="imeiimg" src="${esc(p.imei_photo)}" alt="IMEI"></a>` : '<span class="pill red">Missing</span>'}</p>
+    <div class="grid2"><label>Price (₦)<input id="m-price" type="number" value="${p.price / 100}"></label><label>Stock<input id="m-stock" type="number" value="${p.stock}"></label></div>
+    <div class="row"><button class="b main" id="mSave">Save price &amp; stock</button><button class="b ${p.verified ? 'warn' : 'ok'}" id="mToggle">${p.verified ? 'Hide this listing' : 'Show this listing'}</button></div>
+    <p style="margin-top:10px"><small>To change details like colour, storage or photos, the seller edits them from their dashboard (Sell → My phones → Open / Edit).</small></p>`;
+  $('#modal').hidden = false;
+  const close = () => { $('#modal').hidden = true; };
+  $('#mx').onclick = close;
+  $('#mSave').onclick = async () => { try { await api('/listings/' + id, { method: 'PATCH', body: JSON.stringify({ price: $('#m-price').value, stock: $('#m-stock').value }) }); toast('Saved ✓'); close(); loadListings(); } catch (e) { if (e.message !== 'locked') toast(e.message); } };
+  $('#mToggle').onclick = async () => { try { await api('/listings/' + id, { method: 'PATCH', body: JSON.stringify({ show: !p.verified }) }); toast('Listing updated ✓'); close(); loadListings(); } catch (e) { if (e.message !== 'locked') toast(e.message); } };
+  $('#box').onkeydown = e => { if (e.key === 'Enter' && e.target.tagName === 'INPUT') $('#mSave').click(); };
+}
+$('#modal').addEventListener('click', e => { if (e.target.id === 'modal') $('#modal').hidden = true; });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') $('#modal').hidden = true; });
+
+/* ===== J. START (auto-unlock if the key was entered earlier in this tab) ===== */
+if (KEY) unlock();
+</script>
+</body>
+</html>

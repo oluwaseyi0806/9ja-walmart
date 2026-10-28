@@ -1,0 +1,131 @@
+/* ==========================================================================
+   INTERACTIONS LAYER  (interactions.css)
+   Adds motion + tactile feedback ON TOP of the existing design.
+   Nothing here changes text, colours, fonts, layout or markup.
+   Loaded AFTER styles.css so it can refine the older hover rules.
+   Pair file: interactions.js (tilt physics, cart ping, keyboard access)
+
+   CONTENTS
+     1. Always-on basics  (focus rings, tap behaviour)
+     2. Motion (only when the person has NOT asked for reduced motion)
+        2a. Buttons          2b. Product cards (lift, tilt, shine, image zoom)
+        2c. Showcase gallery 2d. Cards entering the page
+        2e. Cart badge ping  2f. Modals, drawer, toast
+     3. Touch screens (press feedback, no sticky hover)
+   EDIT HERE: --ix-* values below (speed, spring), tilt strength is in interactions.js
+   ========================================================================== */
+
+:root {
+  --ix-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275); /* gentle overshoot = springy */
+  --ix-out: cubic-bezier(0.22, 1, 0.36, 1);             /* smooth settle */
+}
+
+/* ---------- 1. ALWAYS-ON BASICS (accessibility, not motion) ---------- */
+button, a, .card, .chip, .offer, .ord.clickable { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+:where(button, a, [role="button"], .card, .offer, .chip):focus-visible {
+  outline: 3px solid var(--green);                                   /* fallback */
+  outline: 3px solid color-mix(in srgb, var(--green) 60%, transparent);
+  outline-offset: 3px;
+}
+
+/* ---------- 2. MOTION (skipped entirely for "reduce motion") ---------- */
+@media (prefers-reduced-motion: no-preference) {
+
+  /* ===== 2a. BUTTONS: instant press-squash + soft lift ===== */
+  .btn, .hbtn, .chip, .mobbar button, .tabs button, .star, .offer, .ord.clickable {
+    transition: transform .18s var(--ix-spring), box-shadow .2s ease, background-color .15s ease, filter .2s ease;
+  }
+  .btn:active, .hbtn:active, .chip:active, .mobbar button:active, .tabs button:active, .star:active { transform: scale(0.97); transition-duration: .06s; }
+  .btn:active { transform: translateY(4px) scale(0.97); }              /* keeps your existing "3D key" press depth */
+  .card .btn:active { transform: translateZ(14px) scale(0.97); }
+  .offer:active, .ord.clickable:active { transform: scale(0.985); transition-duration: .06s; }
+
+  /* ===== 2b. PRODUCT CARDS ===== */
+  .card {
+    --rx: 0deg; --ry: 0deg; --lift: 0px; --s: 1;                       /* driven by interactions.js + hover */
+    transform: perspective(900px) translate3d(0, var(--lift), 0) rotateX(var(--rx)) rotateY(var(--ry)) scale3d(var(--s), var(--s), 1);
+    transition: transform .6s var(--ix-spring), box-shadow .35s ease;   /* spring back to rest */
+  }
+  .card.is-tilting { transition: transform .09s linear, box-shadow .35s ease; } /* follow the pointer closely */
+  .card .img img { transition: transform .55s var(--ix-out); will-change: transform; }
+
+  /* the specular shine (a soft light that follows the pointer) */
+  .card::after, .gal::after {
+    content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0; z-index: 3;
+    background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,.55), rgba(255,255,255,0) 58%);
+    transition: opacity .3s ease;
+  }
+  .card::after { transform: translateZ(40px); }
+  .card.is-tilting::after, .gal.is-tilting::after { opacity: 1; }
+
+  /* ===== 2c. SHOWCASE GALLERY (phone popup photo) ===== */
+  .gal {
+    position: relative; --rx: 0deg; --ry: 0deg; --s: 1; border-radius: 14px;
+    transform: perspective(900px) rotateX(var(--rx)) rotateY(var(--ry)) scale3d(var(--s), var(--s), 1);
+    transition: transform .6s var(--ix-spring);
+  }
+  .gal.is-tilting { transition: transform .09s linear; }
+
+  /* ===== 2d. CARDS ENTERING THE PAGE (when a list loads or filters change) ===== */
+  @keyframes ix-rise { from { opacity: 0; translate: 0 14px; } to { opacity: 1; translate: 0 0; } }
+  .grid .card, .row .card { animation: ix-rise .45s var(--ix-out) backwards; }
+.grid .card:nth-child(2),.row .card:nth-child(2){animation-delay:40ms}
+.grid .card:nth-child(3),.row .card:nth-child(3){animation-delay:80ms}
+.grid .card:nth-child(4),.row .card:nth-child(4){animation-delay:120ms}
+.grid .card:nth-child(5),.row .card:nth-child(5){animation-delay:160ms}
+.grid .card:nth-child(6),.row .card:nth-child(6){animation-delay:200ms}
+.grid .card:nth-child(7),.row .card:nth-child(7){animation-delay:240ms}
+.grid .card:nth-child(8),.row .card:nth-child(8){animation-delay:280ms}
+.grid .card:nth-child(9),.row .card:nth-child(9){animation-delay:320ms}
+.grid .card:nth-child(10),.row .card:nth-child(10){animation-delay:360ms}
+.grid .card:nth-child(11),.row .card:nth-child(11){animation-delay:400ms}
+.grid .card:nth-child(12),.row .card:nth-child(12){animation-delay:440ms}
+
+  /* ===== 2e. CART BADGE PING (js adds the class "ping" when an item is added) ===== */
+  #cartCount { display: inline-block; }                                  /* so it is allowed to scale */
+  @keyframes ping {
+    0%   { scale: 1;    box-shadow: 0 0 0 0 rgba(245,165,36,.65); box-shadow: 0 0 0 0 color-mix(in srgb, var(--orange) 70%, transparent); }
+    40%  { scale: 1.35; }
+    100% { scale: 1;    box-shadow: 0 0 0 12px rgba(245,165,36,0); }
+  }
+  #cartCount.ping { animation: ping .6s var(--ix-out); }
+
+  /* ===== 2f. MODALS, DRAWER, TOAST: quick slide + fade in (150-250ms) ===== */
+  @keyframes ix-fade   { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes ix-pop    { from { opacity: 0; translate: 0 16px; scale: .98; } to { opacity: 1; translate: 0 0; scale: 1; } }
+  @keyframes ix-drawer { from { opacity: .4; translate: 36px 0; } to { opacity: 1; translate: 0 0; } }
+  .modal:not([hidden])        { animation: ix-fade .18s ease-out; }
+  .modal:not([hidden]) .box   { animation: ix-pop .24s var(--ix-out); }
+  .drawer:not([hidden])       { animation: ix-drawer .24s var(--ix-out); }
+  .toast:not([hidden])        { animation: ix-pop .2s var(--ix-out); }
+}
+
+/* ---------- 2 (MOUSE ONLY). HOVER EFFECTS: only for devices that truly hover ---------- */
+@media (prefers-reduced-motion: no-preference) and (hover: hover) and (pointer: fine) {
+  .btn:not(:disabled):hover { transform: translateY(-1px); filter: drop-shadow(0 6px 8px rgba(0,0,0,.14)); }
+  .card .btn:not(:disabled):hover { transform: translateZ(14px) translateY(-1px); }
+  .hbtn:hover, .chip:hover { transform: translateY(-1px); filter: drop-shadow(0 6px 8px rgba(0,0,0,.10)); }
+
+  .card:hover {                                                         /* lift + deeper shadow + slight growth */
+    --lift: -4px; --s: 1.02;
+    transform: perspective(900px) translate3d(0, var(--lift), 0) rotateX(var(--rx)) rotateY(var(--ry)) scale3d(var(--s), var(--s), 1);
+    box-shadow: var(--shadow-lg);
+  }
+  .card:hover .img img { transform: scale(1.04); }                      /* photo zooms inside its rounded frame */
+  .gal:hover { --s: 1.012; }
+}
+
+/* ---------- 3. TOUCH SCREENS: press feedback, and NO sticky hover after a tap ---------- */
+@media (hover: none) {
+  /* undo the older hover rules (they would stay "stuck" on after a tap) */
+  .card:hover { transform: perspective(900px) translate3d(0, var(--lift, 0px), 0) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) scale3d(var(--s, 1), var(--s, 1), 1);
+                box-shadow: var(--shadow); }
+  .btn:hover { background: var(--green); }
+  .btn.ghost:hover { background: #fff; }
+  .hbtn:hover { background: none; }
+  .hbtn.primary:hover { background: var(--green); }
+  .offer:hover, .ord.clickable:hover { background: transparent; }
+}
+@media (hover: none) and (prefers-reduced-motion: no-preference) {
+  .card:active { --s: 0.985; }                                          /* the card dips under the finger */
+}

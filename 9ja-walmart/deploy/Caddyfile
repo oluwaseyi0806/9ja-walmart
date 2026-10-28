@@ -1,0 +1,17 @@
+# ============================================================
+# CADDY: gives your site HTTPS automatically and hides the admin.
+# Replace  yourdomain.com  with your real domain (first line only).
+# Copy to /etc/caddy/Caddyfile on the server, then: sudo systemctl reload caddy
+# ============================================================
+yourdomain.com, www.yourdomain.com {
+	encode gzip
+
+	# ---- ADMIN LOCKDOWN: asks for a username + password BEFORE the admin page or admin API even loads.
+	# Make the hash with:  caddy hash-password      (paste the result below)
+	@admin path /admin.html /api/admin/*
+	basic_auth @admin {
+		boss PASTE_HASH_FROM_caddy_hash-password_HERE
+	}
+
+	reverse_proxy localhost:3000
+}

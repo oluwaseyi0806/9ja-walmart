@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>9JA WALMART | Original phones from verified stores</title>
+<meta name="description" content="Nigeria's marketplace for original phones from verified stores in every state. Pay safely in the app.">
+<!-- FONT: Plus Jakarta Sans (change here + --font in styles.css) -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/logo-icon.svg">
+<meta name="theme-color" content="#0B7A53">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="interactions.css">
+</head>
+<body>
+<!-- ===== TOP ANNOUNCEMENT BAR ===== -->
+<div class="topbar">Original phones from verified stores in every state &nbsp;·&nbsp; Pay safely in the app</div>
+<!-- ===== HEADER: logo, search, track, cart ===== -->
+<header class="hdr">
+  <a class="logo" href="/" aria-label="9JA WALMART home"><img class="logo-mark" src="/logo-mark.svg" alt="" width="36" height="36"><span class="lw"><b>9JA</b> <em>WALMART</em></span></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Search phones: Samsung A15, Tecno Spark, Ado Ekiti…" autocomplete="off">
+    <div id="sugg" class="sugg" hidden></div>
+  </div>
+  <button class="hbtn" id="sellBtn">Sell</button>
+  <button class="hbtn" id="acctBtn">Sign in</button>
+  <button class="hbtn" id="trackBtn">Track</button>
+  <button class="hbtn" id="cartBtn">Cart <b id="cartCount">0</b></button>
+</header>
+<!-- ===== CATEGORY BAR (filled by js/03-categories.js) ===== -->
+<nav id="cats" class="cats"></nav>
+
+<!-- ===== MAIN PAGE CONTENT ===== -->
+<main>
+  <!-- Hero banner carousel (js/04-hero.js) -->
+  <section class="hero" id="hero" aria-label="Promotions"></section>
+
+  <!-- ===== TRUST STRIP: why buyers can relax ===== -->
+  <section class="trust" aria-label="Why buy here">
+    <div><i></i><b>Verified stores</b><span>Every seller is checked before listing</span></div>
+    <div><i></i><b>Money held until delivery</b><span>Released only when you confirm</span></div>
+    <div><i></i><b>IMEI proof on every phone</b><span>Photo checked by our team</span></div>
+    <div><i></i><b>All 36 states + FCT</b><span>Find a store near you</span></div>
+  </section>
+
+  <!-- Flash sale (js/05-flash-sale.js) -->
+  <section class="flash" id="flashSec">
+    <div class="flash-h"><h2>Flash sales</h2><span>Ends in <b id="timer">--:--:--</b></span></div>
+    <div id="flashGrid" class="row"></div>
+  </section>
+
+  <!-- All products grid (js/02-products.js) -->
+  <section>
+    <div class="bar">
+      <h2 id="listTitle">All Products</h2>
+      <select id="stateSel" aria-label="State"></select>
+      <select id="sort"><option value="">Sort: Newest</option><option value="low">Price: Low to High</option><option value="high">Price: High to Low</option><option value="rating">Top Rated</option></select>
+    </div>
+    <div id="grid" class="grid"></div>
+  </section>
+</main>
+
+<!-- ===== FOOTER ===== -->
+<footer class="foot">
+  <div class="foot-in">
+    <div class="foot-brand"><a class="logo" href="/"><img class="logo-mark" src="/logo-mark.svg" alt="" width="36" height="36"><span class="lw"><b>9JA</b> <em>WALMART</em></span></a>
+      <p>Nigeria's marketplace for original phones. Pay in the app and your money is held until your phone arrives.</p>
+      <p class="foot-sm">© 2026 9JA WALMART · Built in Nigeria · <span id="appRating"></span></p></div>
+    <div><h4>Shop</h4><a href="/">All phones</a><a href="#flashSec">Flash sales</a><a href="#" id="footTrack">Track an order</a></div>
+    <div><h4>Sell</h4><a href="#" id="footSell">Open a store</a></div>
+    <div><h4>Help</h4><a href="#" id="footTrack2">Report a problem</a></div>
+  </div>
+</footer>
+
+<!-- ===== MOBILE STICKY CHECKOUT BAR ===== -->
+<div class="mobbar" id="mobbar"><span id="mobTotal">₦0</span><button id="mobCheckout">Checkout</button></div>
+
+<!-- ===== CART DRAWER (js/07-cart.js) ===== -->
+<aside id="drawer" class="drawer" hidden>
+  <div class="d-h"><h3>Your Cart</h3><button id="closeCart" aria-label="Close">✕</button></div>
+  <div id="cartItems"></div>
+  <div class="d-f"><div class="tot">Total <b id="cartTotal">₦0</b></div><button class="btn" id="goCheckout">Checkout (Guest OK)</button></div>
+</aside>
+
+<!-- ===== POPUPS: checkout, tracking, toast ===== -->
+<div id="modal" class="modal" hidden><div class="box" id="modalBox"></div></div>
+<div id="toast" class="toast" hidden></div>
+<!-- ===== JAVASCRIPT (order matters; each file = one feature, see /js) ===== -->
+<script src="js/01-helpers.js"></script>
+<script src="js/02-products.js"></script>
+<script src="js/03-categories.js"></script>
+<script src="js/04-hero.js"></script>
+<script src="js/05-flash-sale.js"></script>
+<script src="js/06-search.js"></script>
+<script src="js/07-cart.js"></script>
+<script src="js/08-checkout.js"></script>
+<script src="js/09-tracking.js"></script>
+<script src="js/10-account.js"></script>
+<script src="js/12-seller.js"></script>
+<script src="js/14-phone-ui.js"></script>
+<script src="js/11-init.js"></script>
+<script src="interactions.js"></script>
+</body>
+</html>
